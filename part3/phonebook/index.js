@@ -58,9 +58,30 @@ app.get('/api/persons/:id', (request, response) => {
 });
 
 app.post('/api/persons', (request, response) => {
+    const body = request.body;
+
+    if (!body.name) {
+        return response.status(400).json({
+            error: 'name missing'
+        });
+    }
+
+    if (!body.number) {
+        return response.status(400).json({
+            error: 'number missing'
+        });
+    }
+
+    const found = persons.find(p => p.name === body.name);
+    if (found) {
+        return response.status(409).json({
+            error: 'name must be unique'
+        });
+    }
+
     const person = {
-        name: request.body.name,
-        number: request.body.number,
+        name: body.name,
+        number: body.number,
         id: generateId()
     };
 
